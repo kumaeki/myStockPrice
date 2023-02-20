@@ -6,6 +6,14 @@ export const User = Type.Object({
 });
 export type UserType = Static<typeof User>;
 
+export const StockHistory = Type.Object({
+    date: Type.String(),
+    customerId: Type.String(),
+    amount: Type.Number(),
+});
+export type StockHistoryType = Static<typeof StockHistory>;
+export const HistoryArray = Type.Array(StockHistory);
+
 export const Stock = Type.Object({
     type: Type.String(),
     name: Type.String(),
@@ -14,6 +22,7 @@ export const Stock = Type.Object({
     mean_price: Type.Number(),
     current_price: Type.Number(),
     amount: Type.Number(),
+    history: HistoryArray,
 });
 export type StockType = Static<typeof Stock>;
 

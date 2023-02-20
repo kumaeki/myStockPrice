@@ -5,23 +5,30 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { createData } from '../hooks/UseFetchSharesInfo';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { StockInfo } from '../hooks/UseFetchSharesInfo';
 
-function Row(props: { row: ReturnType<typeof createData> }) {
+const Row = (props: { row: StockInfo }) => {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
-
     return (
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
-                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    <IconButton
+                        aria-label="expand row"
+                        size="small"
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? (
+                            <KeyboardArrowUpIcon />
+                        ) : (
+                            <KeyboardArrowDownIcon />
+                        )}
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
@@ -35,10 +42,17 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                 <TableCell align="right">{row.amount}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell
+                    style={{ paddingBottom: 0, paddingTop: 0 }}
+                    colSpan={6}
+                >
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            <Typography variant="h6" gutterBottom component="div">
+                            <Typography
+                                variant="h6"
+                                gutterBottom
+                                component="div"
+                            >
                                 History
                             </Typography>
                             <Table size="small" aria-label="purchases">
@@ -46,18 +60,29 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                                     <TableRow>
                                         <TableCell>Date</TableCell>
                                         <TableCell>Customer</TableCell>
-                                        <TableCell align="right">Amount</TableCell>
-                                        <TableCell align="right">Total price ($)</TableCell>
+                                        <TableCell align="right">
+                                            Amount
+                                        </TableCell>
+                                        {/* <TableCell align="right">
+                                            Total price ($)
+                                        </TableCell> */}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.history.map((historyRow) => (
+                                    {row.history?.map((historyRow) => (
                                         <TableRow key={historyRow.date}>
-                                            <TableCell component="th" scope="row">
+                                            <TableCell
+                                                component="th"
+                                                scope="row"
+                                            >
                                                 {historyRow.date}
                                             </TableCell>
-                                            <TableCell>{historyRow.customerId}</TableCell>
-                                            <TableCell align="right">{historyRow.amount}</TableCell>
+                                            <TableCell>
+                                                {historyRow.customerId}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {historyRow.amount}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -68,6 +93,6 @@ function Row(props: { row: ReturnType<typeof createData> }) {
             </TableRow>
         </React.Fragment>
     );
-}
+};
 
 export default Row;

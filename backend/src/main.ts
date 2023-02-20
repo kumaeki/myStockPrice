@@ -2,12 +2,16 @@ import { Kind, Static, Type } from '@sinclair/typebox';
 import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
 import { StockArray, StockArrayType, User, UserType } from './feature/Types';
+import cors from '@fastify/cors';
 
 const runFastify = async () => {
     const fastify = Fastify({
         logger: true,
     });
 
+    await fastify.register(cors, {
+        origin: ['http://localhost:4000', 'http://192.168.1.13:4000'],
+    });
     await fastify.register(require('@fastify/swagger'));
     await fastify.register(require('@fastify/swagger-ui'), {
         routePrefix: '/documentation',
@@ -32,6 +36,7 @@ const runFastify = async () => {
         (req, rep) => {
             const { body: user } = req;
             const stockArray = fetchStockInfo();
+            console.log(stockArray.length);
             rep.status(200).send(stockArray);
         }
     );

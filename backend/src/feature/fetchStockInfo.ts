@@ -76,6 +76,18 @@ const createData = (
         mean_price,
         current_price,
         amount,
+        history: [
+            {
+                date: '2020-01-05',
+                customerId: '11091700',
+                amount: 3,
+            },
+            {
+                date: '2023-01-05',
+                customerId: '11091700',
+                amount: 1,
+            },
+        ],
     };
 };
 
