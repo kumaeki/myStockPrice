@@ -36,7 +36,6 @@ const runFastify = async () => {
         (req, rep) => {
             const { body: user } = req;
             const stockArray = fetchStockInfo();
-            console.log(stockArray.length);
             rep.status(200).send(stockArray);
         }
     );

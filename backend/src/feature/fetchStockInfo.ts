@@ -1,6 +1,9 @@
+import dbConnection from './dbTest';
 import { Stock, StockArray, StockArrayType, StockType } from './Types';
 
 const fetchStockInfo = (): StockArrayType => {
+    dbConnection();
+
     return [
         createData(
             '国内株式',
