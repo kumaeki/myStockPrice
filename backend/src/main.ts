@@ -3,6 +3,8 @@ import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
 import { StockArray, StockArrayType, User, UserType } from './feature/Types';
 import cors from '@fastify/cors';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 
 const runFastify = async () => {
     const fastify = Fastify({
@@ -12,8 +14,8 @@ const runFastify = async () => {
     await fastify.register(cors, {
         origin: ['http://localhost:4000', 'http://192.168.1.13:4000'],
     });
-    await fastify.register(require('@fastify/swagger'));
-    await fastify.register(require('@fastify/swagger-ui'), {
+    await fastify.register(fastifySwagger);
+    await fastify.register(fastifySwaggerUi, {
         routePrefix: '/documentation',
         staticCSP: true,
         transformSpecificationClone: true,
