@@ -1,10 +1,18 @@
 import { Kind, Static, Type } from '@sinclair/typebox';
 import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
-import { StockArray, StockArrayType, User, UserType } from './feature/Types';
+import {
+    StockArray,
+    StockArrayType,
+    StockOrder,
+    StockOrderType,
+    User,
+    UserType,
+} from './feature/Types';
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import { insertOne } from './feature/DBAccess/DBAccess';
 
 const runFastify = async () => {
     const fastify = Fastify({
@@ -21,24 +29,37 @@ const runFastify = async () => {
         transformSpecificationClone: true,
     });
 
-    /**
-     * test_post
-     */
-
     fastify.post<{ Body: UserType; Reply: StockArrayType }>(
-        '/test_post',
+        '/fetchAllStockInfo',
         {
             schema: {
-                body: User,
+                // body: User,
+                response: {
+                    200: StockArray,
+                },
+            },
+        },
+        async (req, rep) => {
+            // const { body: user } = req;
+            const stockArray = fetchStockInfo();
+            rep.status(200).send(await stockArray);
+        }
+    );
+
+    fastify.post<{ Body: StockOrderType; Reply: StockArrayType }>(
+        '/insertOneStock',
+        {
+            schema: {
+                body: StockOrder,
                 response: {
                     200: StockArray,
                 },
             },
         },
         (req, rep) => {
-            const { body: user } = req;
-            const stockArray = fetchStockInfo();
-            rep.status(200).send(stockArray);
+            const { body: stockOrder } = req;
+            insertOne(stockOrder);
+            rep.status(200).send();
         }
     );
 

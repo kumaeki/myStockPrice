@@ -6,17 +6,63 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import UseFetchSharesInfo from '../hooks/UseFetchSharesInfo';
 import Row from './Row';
-import { StockInfo } from '../hooks/UseFetchSharesInfo';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Dayjs } from 'dayjs';
+import useFetchShareInfo, { StockInfo } from '../hooks/useFetchShareInfo';
 
 const App: FC = () => {
     const [rows, setRows] = useState<StockInfo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [open, setOpen] = React.useState(false);
+    const [stockType, setStockType] = useState('');
+    const [stockAccount, setStockAccount] = useState('');
+    const [stockBrand, setStockBrand] = useState('');
+    const [stockPrice, setStockPrice] = useState(0);
+    const [stockNumber, setStockNumber] = useState(0);
+    const [stockPurchaseDate, setStockPurchaseDate] =
+        React.useState<Dayjs | null>(null);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleTypeChange = (event: SelectChangeEvent) => {
+        setStockType(event.target.value as string);
+    };
+    const handleAccountChange = (event: SelectChangeEvent) => {
+        setStockAccount(event.target.value as string);
+    };
+    const handleBrandChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setStockBrand(event.target.value as string);
+    };
+    const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setStockPrice(event.target.valueAsNumber);
+    };
+    const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setStockNumber(event.target.valueAsNumber);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await UseFetchSharesInfo();
+            const result = await useFetchShareInfo();
             setRows(result);
             setIsLoading(false);
         };
@@ -28,35 +74,140 @@ const App: FC = () => {
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
-                <div className="Table">
-                    <TableContainer component={Paper}>
-                        <Table aria-label="collapsible table">
-                            <TableHead className="TableHead">
-                                <TableRow>
-                                    <TableCell />
-                                    <TableCell>種類</TableCell>
-                                    <TableCell align="right">銘柄</TableCell>
-                                    <TableCell align="right">口座</TableCell>
-                                    <TableCell align="right">
-                                        保留数量
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        平均取得価額
-                                    </TableCell>
-                                    <TableCell align="right">現在値</TableCell>
-                                    <TableCell align="right">
-                                        時価評価額
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody className="TableBody">
-                                {rows.map((row) => (
-                                    <Row key={row.name} row={row} />
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
+                <>
+                    <Button variant="outlined" onClick={handleClickOpen}>
+                        株情報　新規入力
+                    </Button>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        sx={{ width: '50%', margin: 'auto' }}
+                    >
+                        <DialogTitle>株情報　新規入力</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                株に関する下記の情報を入力してください。
+                            </DialogContentText>
+                            <div>
+                                <FormControl sx={{ minWidth: 120, marginY: 2 }}>
+                                    <InputLabel id="select-type-label">
+                                        種類
+                                    </InputLabel>
+                                    <Select
+                                        labelId="select-type-label"
+                                        id="select-type"
+                                        value={stockType}
+                                        label="種類"
+                                        onChange={handleTypeChange}
+                                    >
+                                        <MenuItem value={10}>国内株式</MenuItem>
+                                        <MenuItem value={20}>米国株式</MenuItem>
+                                        <MenuItem value={30}>中国株式</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl sx={{ minWidth: 120, margin: 2 }}>
+                                    <InputLabel id="select-account-label">
+                                        口座
+                                    </InputLabel>
+                                    <Select
+                                        labelId="select-account-label"
+                                        id="select-account"
+                                        value={stockAccount}
+                                        label="口座"
+                                        onChange={handleAccountChange}
+                                    >
+                                        <MenuItem value={10}>一般</MenuItem>
+                                        <MenuItem value={20}>特定</MenuItem>
+                                        <MenuItem value={30}>NISA</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div>
+                                <TextField
+                                    sx={{ marginY: 2 }}
+                                    margin="dense"
+                                    id="brand"
+                                    label="銘柄"
+                                    variant="standard"
+                                    onChange={handleBrandChange}
+                                />
+                            </div>
+                            <div>
+                                <TextField
+                                    sx={{ marginY: 2 }}
+                                    margin="dense"
+                                    id="price"
+                                    label="単価"
+                                    type="number"
+                                    variant="standard"
+                                    onChange={handlePriceChange}
+                                />
+                            </div>
+                            <div>
+                                <TextField
+                                    sx={{ marginTop: 2, marginBottom: 4 }}
+                                    margin="dense"
+                                    id="number"
+                                    label="数量"
+                                    type="number"
+                                    variant="standard"
+                                    onChange={handleNumberChange}
+                                />
+                            </div>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    label="購入日付"
+                                    value={stockPurchaseDate}
+                                    onChange={(newValue) => {
+                                        setStockPurchaseDate(newValue);
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField {...params} />
+                                    )}
+                                />
+                            </LocalizationProvider>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={handleClose}>Subscribe</Button>
+                        </DialogActions>
+                    </Dialog>
+                    <div className="Table">
+                        <TableContainer component={Paper}>
+                            <Table aria-label="collapsible table">
+                                <TableHead className="TableHead">
+                                    <TableRow>
+                                        <TableCell />
+                                        <TableCell>種類</TableCell>
+                                        <TableCell align="right">
+                                            銘柄
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            口座
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            保留数量
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            平均取得価額
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            現在値
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            時価評価額
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody className="TableBody">
+                                    {rows.map((row) => (
+                                        <Row key={row.name} row={row} />
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </div>
+                </>
             )}
         </div>
     );

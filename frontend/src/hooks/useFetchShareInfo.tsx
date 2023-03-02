@@ -15,7 +15,7 @@ export type StockInfo = {
     history: StockHistory[];
 };
 
-const UseFetchSharesInfo = async (): Promise<StockInfo[]> => {
+const useFetchShareInfo = async (): Promise<StockInfo[]> => {
     const url = 'http://127.0.0.1:3000/test_post';
 
     const requestOptions = {
@@ -36,4 +36,4 @@ const UseFetchSharesInfo = async (): Promise<StockInfo[]> => {
     return result;
 };
 
-export default UseFetchSharesInfo;
+export default useFetchShareInfo;

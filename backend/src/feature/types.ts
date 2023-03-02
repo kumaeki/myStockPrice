@@ -6,36 +6,36 @@ export const User = Type.Object({
 });
 export type UserType = Static<typeof User>;
 
+// stock
 export const StockHistory = Type.Object({
     date: Type.String(),
     customerId: Type.String(),
     amount: Type.Number(),
 });
-export type StockHistoryType = Static<typeof StockHistory>;
 export const HistoryArray = Type.Array(StockHistory);
-
 export const Stock = Type.Object({
     type: Type.String(),
     name: Type.String(),
-    account: Type.String(),
-    shares_number: Type.Number(),
-    mean_price: Type.Number(),
-    current_price: Type.Number(),
-    amount: Type.Number(),
+    number: Type.Number(),
+    price_mean: Type.Number(),
+    price_current: Type.Number(),
+    amount_buying: Type.Number(),
+    amount_current: Type.Number(),
+    stock_yield: Type.Number(),
     history: HistoryArray,
 });
 export type StockType = Static<typeof Stock>;
-
 export const StockArray = Type.Array(Stock);
 export type StockArrayType = Static<typeof StockArray>;
 
-// export type Stock = {
-//     type: String;
-//     name: String;
-//     account: String;
-//     shares_number: Number;
-//     mean_price: Number;
-//     current_price: Number;
-//     amount: Number;
-// };
-// export type StockArray = Array<Stock>;
+// stock order
+export const StockOrder = Type.Object({
+    code: Type.String(),
+    account: Type.String(),
+    number: Type.Number(),
+    price: Type.Number(),
+    purchase_date: Type.String({ format: 'date' }),
+});
+export type StockOrderType = Static<typeof StockOrder>;
+export const StockOrderArray = Type.Array(StockOrder);
+export type StockOrderArrayType = Static<typeof StockOrderArray>;

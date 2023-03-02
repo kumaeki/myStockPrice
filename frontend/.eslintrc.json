@@ -1,0 +1,29 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "@typescript-eslint/strict-boolean-expressions": [
+            2,
+            {
+                "allowString" : false,
+                "allowNumber" : false
+            }
+        ],
+    },
+    "ignorePatterns": ["src/**/*.test.*","src/**/*.Test.*","src/**/reportWebVitals.ts"],
+}

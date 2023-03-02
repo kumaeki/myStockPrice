@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "fe": "cd frontend && npm run dev",
+    "be": "cd backend && npm run start"
+  },
+  "dependencies": {
+    "npm": "^9.5.1"
+  }
+}
