@@ -89,22 +89,16 @@ const App: FC = () => {
                                 株に関する下記の情報を入力してください。
                             </DialogContentText>
                             <div>
-                                <FormControl sx={{ minWidth: 120, marginY: 2 }}>
-                                    <InputLabel id="select-type-label">
-                                        種類
-                                    </InputLabel>
-                                    <Select
-                                        labelId="select-type-label"
-                                        id="select-type"
-                                        value={stockType}
-                                        label="種類"
-                                        onChange={handleTypeChange}
-                                    >
-                                        <MenuItem value={10}>国内株式</MenuItem>
-                                        <MenuItem value={20}>米国株式</MenuItem>
-                                        <MenuItem value={30}>中国株式</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <div>
+                                    <TextField
+                                        sx={{ marginY: 2 }}
+                                        margin="dense"
+                                        id="brand"
+                                        label="銘柄"
+                                        variant="standard"
+                                        onChange={handleBrandChange}
+                                    />
+                                </div>
                                 <FormControl sx={{ minWidth: 120, margin: 2 }}>
                                     <InputLabel id="select-account-label">
                                         口座
@@ -116,20 +110,21 @@ const App: FC = () => {
                                         label="口座"
                                         onChange={handleAccountChange}
                                     >
-                                        <MenuItem value={10}>一般</MenuItem>
-                                        <MenuItem value={20}>特定</MenuItem>
-                                        <MenuItem value={30}>NISA</MenuItem>
+                                        <MenuItem value={'一般'}>一般</MenuItem>
+                                        <MenuItem value={'特定'}>特定</MenuItem>
+                                        <MenuItem value={'NISA'}>NISA</MenuItem>
                                     </Select>
                                 </FormControl>
                             </div>
                             <div>
                                 <TextField
-                                    sx={{ marginY: 2 }}
+                                    sx={{ marginTop: 2, marginBottom: 4 }}
                                     margin="dense"
-                                    id="brand"
-                                    label="銘柄"
+                                    id="number"
+                                    label="数量"
+                                    type="number"
                                     variant="standard"
-                                    onChange={handleBrandChange}
+                                    onChange={handleNumberChange}
                                 />
                             </div>
                             <div>
@@ -141,17 +136,6 @@ const App: FC = () => {
                                     type="number"
                                     variant="standard"
                                     onChange={handlePriceChange}
-                                />
-                            </div>
-                            <div>
-                                <TextField
-                                    sx={{ marginTop: 2, marginBottom: 4 }}
-                                    margin="dense"
-                                    id="number"
-                                    label="数量"
-                                    type="number"
-                                    variant="standard"
-                                    onChange={handleNumberChange}
                                 />
                             </div>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -183,7 +167,7 @@ const App: FC = () => {
                                             銘柄
                                         </TableCell>
                                         <TableCell align="right">
-                                            口座
+                                            通貨
                                         </TableCell>
                                         <TableCell align="right">
                                             保留数量
@@ -195,7 +179,13 @@ const App: FC = () => {
                                             現在値
                                         </TableCell>
                                         <TableCell align="right">
+                                            購入時総額
+                                        </TableCell>
+                                        <TableCell align="right">
                                             時価評価額
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            実現損益
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>

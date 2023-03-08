@@ -1,9 +1,11 @@
-import { Kind, Static, Type } from '@sinclair/typebox';
+import { Static, Type } from '@sinclair/typebox';
 import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
 import {
     StockArray,
     StockArrayType,
+    StockInfo,
+    StockInfoType,
     StockOrder,
     StockOrderType,
     User,
@@ -12,7 +14,10 @@ import {
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
-import { insertOne } from './feature/DBAccess/DBAccess';
+import {
+    insertOneStockInfo,
+    insertOneStockOrder,
+} from './feature/DBAccess/DBAccess';
 
 const runFastify = async () => {
     const fastify = Fastify({
@@ -29,47 +34,81 @@ const runFastify = async () => {
         transformSpecificationClone: true,
     });
 
+    const ResponseMessage = Type.Object({
+        msg: Type.String(),
+    });
+
     fastify.post<{ Body: UserType; Reply: StockArrayType }>(
         '/fetchAllStockInfo',
         {
             schema: {
-                // body: User,
                 response: {
                     200: StockArray,
+                    400: ResponseMessage,
                 },
             },
         },
         async (req, rep) => {
-            // const { body: user } = req;
             const stockArray = fetchStockInfo();
             rep.status(200).send(await stockArray);
         }
     );
 
-    fastify.post<{ Body: StockOrderType; Reply: StockArrayType }>(
-        '/insertOneStock',
+    fastify.post<{
+        Body: StockOrderType;
+        Reply: ErrorResponseType;
+    }>(
+        '/insertStockOrder',
         {
             schema: {
                 body: StockOrder,
                 response: {
-                    200: StockArray,
+                    200: ResponseMessage,
+                    400: ResponseMessage,
                 },
             },
         },
         (req, rep) => {
-            const { body: stockOrder } = req;
-            insertOne(stockOrder);
-            rep.status(200).send();
+            try {
+                const { body: stockOrder } = req;
+                insertOneStockOrder(stockOrder);
+                rep.status(200).send({ msg: 'inserted successfully' });
+            } catch (error) {
+                rep.status(400).send({ msg: 'something is going wrong' });
+            }
+        }
+    );
+
+    fastify.post<{
+        Body: StockInfoType;
+        Reply: ErrorResponseType;
+    }>(
+        '/insertStockInfo',
+        {
+            schema: {
+                body: StockInfo,
+                response: {
+                    200: ResponseMessage,
+                    400: ResponseMessage,
+                },
+            },
+        },
+        (req, rep) => {
+            try {
+                const { body: stockInfo } = req;
+                insertOneStockInfo(stockInfo);
+                rep.status(200).send({ msg: 'inserted successfully' });
+            } catch (error) {
+                rep.status(400).send({ msg: 'something is going wrong' });
+            }
         }
     );
 
     /**
      * test get, querystring
      */
-    const ErrorResponse = Type.Object({
-        msg: Type.String(),
-    });
-    type ErrorResponseType = Static<typeof ErrorResponse>;
+
+    type ErrorResponseType = Static<typeof ResponseMessage>;
 
     fastify.get<{ Querystring: UserType; Reply: UserType | ErrorResponseType }>(
         '/test_get',
@@ -78,7 +117,7 @@ const runFastify = async () => {
                 querystring: User,
                 response: {
                     200: User,
-                    400: ErrorResponse,
+                    400: ResponseMessage,
                 },
             },
         },
@@ -96,7 +135,7 @@ const runFastify = async () => {
      * start fastify
      */
     await fastify.ready();
-    fastify.listen({ port: 3000 }, function (err, address) {
+    fastify.listen({ port: 3000 }, function (err) {
         if (err) {
             fastify.log.error(err);
             process.exit(1);

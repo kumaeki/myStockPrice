@@ -1,29 +1,34 @@
 export type StockHistory = {
-    date: string;
-    customerId: string;
-    amount: number;
+    code: string;
+    account: string;
+    number: number;
+    price: number;
+    purchase_date: string;
 };
 
 export type StockInfo = {
-    type: string;
+    code: string;
     name: string;
-    account: string;
-    shares_number: number;
-    mean_price: number;
-    current_price: number;
-    amount: number;
+    type: string;
+    curreny: string;
+    number: number;
+    price_mean: number;
+    price_current: number;
+    amount_buying: number;
+    amount_current: number;
+    stock_yield: number;
     history: StockHistory[];
 };
 
 const useFetchShareInfo = async (): Promise<StockInfo[]> => {
-    const url = 'http://127.0.0.1:3000/test_post';
+    const url = 'http://127.0.0.1:3000/fetchAllStockInfo';
 
     const requestOptions = {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            accept: 'application/json',
         },
-        body: JSON.stringify({ name: 'user', mail: 'user@example.com' }),
+        body: null,
     };
 
     let result: StockInfo[] = [];

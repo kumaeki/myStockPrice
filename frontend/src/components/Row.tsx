@@ -34,12 +34,16 @@ const Row = (props: { row: StockInfo }) => {
                 <TableCell component="th" scope="row">
                     {row.type}
                 </TableCell>
-                <TableCell align="right">{row.name}</TableCell>
-                <TableCell align="right">{row.account}</TableCell>
-                <TableCell align="right">{row.shares_number}</TableCell>
-                <TableCell align="right">{row.mean_price}</TableCell>
-                <TableCell align="right">{row.current_price}</TableCell>
-                <TableCell align="right">{row.amount}</TableCell>
+                <TableCell align="right">
+                    {row.code} {row.name}
+                </TableCell>
+                <TableCell align="right">{row.curreny}</TableCell>
+                <TableCell align="right">{row.number}</TableCell>
+                <TableCell align="right">{row.price_mean}</TableCell>
+                <TableCell align="right">{row.price_current}</TableCell>
+                <TableCell align="right">{row.amount_buying}</TableCell>
+                <TableCell align="right">{row.amount_current}</TableCell>
+                <TableCell align="right">{row.stock_yield}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell
@@ -58,10 +62,13 @@ const Row = (props: { row: StockInfo }) => {
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Customer</TableCell>
+                                        <TableCell>口座</TableCell>
+                                        <TableCell>数量</TableCell>
                                         <TableCell align="right">
-                                            Amount
+                                            価額
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            購入日付
                                         </TableCell>
                                         {/* <TableCell align="right">
                                             Total price ($)
@@ -70,18 +77,23 @@ const Row = (props: { row: StockInfo }) => {
                                 </TableHead>
                                 <TableBody>
                                     {row.history?.map((historyRow) => (
-                                        <TableRow key={historyRow.date}>
+                                        <TableRow
+                                            key={historyRow.purchase_date}
+                                        >
                                             <TableCell
                                                 component="th"
                                                 scope="row"
                                             >
-                                                {historyRow.date}
+                                                {historyRow.account}
                                             </TableCell>
                                             <TableCell>
-                                                {historyRow.customerId}
+                                                {historyRow.number}
                                             </TableCell>
                                             <TableCell align="right">
-                                                {historyRow.amount}
+                                                {historyRow.price}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {historyRow.purchase_date}
                                             </TableCell>
                                         </TableRow>
                                     ))}
