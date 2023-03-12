@@ -6,6 +6,11 @@ export const User = Type.Object({
 });
 export type UserType = Static<typeof User>;
 
+export const StockBrand = Type.Object({ code: Type.String() });
+export type StockBrandType = Static<typeof StockBrand>;
+export const StockBrandArray = Type.Array(StockBrand);
+export type StockBrandArrayType = Static<typeof StockBrandArray>;
+
 // stock order
 export const StockOrder = Type.Object({
     code: Type.String(),
@@ -28,6 +33,15 @@ export const StockInfo = Type.Object({
 export type StockInfoType = Static<typeof StockInfo>;
 export const StockInfoArray = Type.Array(StockInfo);
 export type StockInfoArrayType = Static<typeof StockInfoArray>;
+
+// current stock price
+export const CurrentStockPrice = Type.Object({
+    code: Type.String(),
+    regularMarketPrice: Type.Number(),
+});
+export type CurrentStockPriceType = Static<typeof CurrentStockPrice>;
+export const CurrentStockPriceArray = Type.Array(CurrentStockPrice);
+export type CurrentStockPriceArrayType = Static<typeof CurrentStockPriceArray>;
 
 // stock display in page
 export const HistoryArray = Type.Array(StockOrder);

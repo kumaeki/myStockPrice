@@ -2,9 +2,17 @@ import { Static, Type } from '@sinclair/typebox';
 import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
 import {
+    CurrentStockPriceArray,
+    CurrentStockPriceArrayType,
     StockArray,
     StockArrayType,
+    StockBrand,
+    StockBrandArray,
+    StockBrandArrayType,
+    StockBrandType,
     StockInfo,
+    StockInfoArray,
+    StockInfoArrayType,
     StockInfoType,
     StockOrder,
     StockOrderType,
@@ -18,6 +26,9 @@ import {
     insertOneStockInfo,
     insertOneStockOrder,
 } from './feature/DBAccess/DBAccess';
+import fetchStockInfoFromYahoo, {
+    fetchCurrentStockPriceFromYahoo,
+} from './feature/fetchStockInfoFromYahoo';
 
 const runFastify = async () => {
     const fastify = Fastify({
@@ -38,7 +49,47 @@ const runFastify = async () => {
         msg: Type.String(),
     });
 
-    fastify.post<{ Body: UserType; Reply: StockArrayType }>(
+    fastify.post<{ Body: StockBrandArrayType; Reply: StockInfoArrayType }>(
+        '/fetchStockInfoFromYahoo',
+        {
+            schema: {
+                body: StockBrandArray,
+                response: {
+                    200: StockInfoArray,
+                    400: ResponseMessage,
+                },
+            },
+        },
+        async (req, rep) => {
+            const { body: ctockBrandArray } = req;
+            const stockInfoArray = fetchStockInfoFromYahoo(ctockBrandArray);
+            rep.status(200).send(await stockInfoArray);
+        }
+    );
+
+    fastify.post<{
+        Body: StockBrandArrayType;
+        Reply: CurrentStockPriceArrayType;
+    }>(
+        '/fetchCurrentStockPriceFromYahoo',
+        {
+            schema: {
+                body: StockBrandArray,
+                response: {
+                    200: CurrentStockPriceArray,
+                    400: ResponseMessage,
+                },
+            },
+        },
+        async (req, rep) => {
+            const { body: ctockBrandArray } = req;
+            const currentStockPriceArray =
+                fetchCurrentStockPriceFromYahoo(ctockBrandArray);
+            rep.status(200).send(await currentStockPriceArray);
+        }
+    );
+
+    fastify.post<{ Body: null; Reply: StockArrayType }>(
         '/fetchAllStockInfo',
         {
             schema: {

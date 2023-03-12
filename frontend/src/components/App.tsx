@@ -83,10 +83,10 @@ const App: FC = () => {
                         onClose={handleClose}
                         sx={{ width: '50%', margin: 'auto' }}
                     >
-                        <DialogTitle>株情報　新規入力</DialogTitle>
+                        <DialogTitle>株購入履歴　新規入力</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                株に関する下記の情報を入力してください。
+                                株の購入履歴を入力してください。
                             </DialogContentText>
                             <div>
                                 <div>
