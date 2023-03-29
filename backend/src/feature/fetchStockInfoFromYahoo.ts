@@ -1,43 +1,32 @@
+import { Static, Type } from '@sinclair/typebox';
 import yahooFinance from 'yahoo-finance2';
-import {
-    CurrentStockPriceArrayType,
-    StockBrandArrayType,
-    StockInfoArrayType,
-} from './Types';
 
-const fetchStockInfoFromYahoo = async (codeArray: StockBrandArrayType) => {
-    const results: StockInfoArrayType = [];
-    const param = codeArray.map((code) => code.code);
-    const dataFromYahoo = await yahooFinance.quote(param, {
+export const StockBrand = Type.String();
+export type StockBrandType = Static<typeof StockBrand>;
+
+// current stock price
+export const CurrentStockInfo = Type.Object({
+    code: Type.String(),
+    name: Type.String(),
+    currency: Type.String(),
+    regularMarketPrice: Type.Number(),
+});
+export type CurrentStockInfoType = Static<typeof CurrentStockInfo>;
+export const CurrentStockInfoArray = Type.Array(CurrentStockInfo);
+export type CurrentStockInfoArrayType = Static<typeof CurrentStockInfoArray>;
+
+const fetchStockInfoFromYahoo = async (code: StockBrandType) => {
+    const dataFromYahoo = await yahooFinance.quote(code, {
         fields: ['shortName', 'currency', 'regularMarketPrice'],
     });
     console.log(dataFromYahoo);
-    dataFromYahoo.forEach((item) =>
-        results.push({
-            code: item.symbol,
-            name: item.shortName || '',
-            currency: item.currency || '',
-            type: '',
-        })
-    );
-    return results;
-};
-
-export const fetchCurrentStockPriceFromYahoo = async (
-    codeArray: StockBrandArrayType
-) => {
-    const results: CurrentStockPriceArrayType = [];
-    const param = codeArray.map((code) => code.code);
-    const dataFromYahoo = await yahooFinance.quote(param, {
-        fields: ['regularMarketPrice'],
-    });
-    dataFromYahoo.forEach((item) =>
-        results.push({
-            code: item.symbol,
-            regularMarketPrice: item.regularMarketPrice || 0,
-        })
-    );
-    return results;
+    const result = {
+        code: dataFromYahoo.symbol,
+        name: dataFromYahoo.shortName || '',
+        currency: dataFromYahoo.currency || '',
+        regularMarketPrice: dataFromYahoo.regularMarketPrice || 0,
+    };
+    return result;
 };
 
 export default fetchStockInfoFromYahoo;

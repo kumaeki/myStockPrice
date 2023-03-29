@@ -1,11 +1,8 @@
 import { MongoClient } from 'mongodb';
+import { StockInfoType } from '../insertStockInfo';
+import { StockOrderType } from '../insertStockOrder';
 
-import {
-    StockArrayType,
-    StockInfoType,
-    StockOrderType,
-    StockType,
-} from '../Types';
+import { StockArrayType, StockType } from '../Types';
 
 const url = 'mongodb://127.0.0.1:27017';
 const databaseName = 'local';
@@ -77,31 +74,6 @@ const fetchAllStockInfoInner = async (
         return result;
     } finally {
         await client.close();
-    }
-};
-
-const initializeDB = async () => {
-    const client = new MongoClient(url);
-    const db = client.db(databaseName);
-    if ((await db.collection(collectionType).find().hasNext()) === false) {
-        db.collection(collectionType).insertMany([
-            { code: 1, name: '国内株式' },
-            { code: 2, name: '米国株式' },
-            { code: 3, name: '中国株式' },
-            { code: 4, name: 'アジア株式' },
-        ]);
-        db.collection(collectionAccount).insertMany([
-            { code: 1, name: '一般' },
-            { code: 2, name: '特定' },
-            { code: 3, name: 'NISA' },
-        ]);
-        db.collection(collectionCurrency).insertMany([
-            { code: 1, name: 'JPY' },
-            { code: 2, name: 'USD' },
-            { code: 3, name: 'RMB' },
-            { code: 4, name: 'HKD' },
-            { code: 5, name: 'SGD' },
-        ]);
     }
 };
 

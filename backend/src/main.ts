@@ -1,24 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
-import {
-    CurrentStockPriceArray,
-    CurrentStockPriceArrayType,
-    StockArray,
-    StockArrayType,
-    StockBrand,
-    StockBrandArray,
-    StockBrandArrayType,
-    StockBrandType,
-    StockInfo,
-    StockInfoArray,
-    StockInfoArrayType,
-    StockInfoType,
-    StockOrder,
-    StockOrderType,
-    User,
-    UserType,
-} from './feature/Types';
+import { StockArray, StockArrayType, User, UserType } from './feature/Types';
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
@@ -27,8 +10,13 @@ import {
     insertOneStockOrder,
 } from './feature/DBAccess/DBAccess';
 import fetchStockInfoFromYahoo, {
-    fetchCurrentStockPriceFromYahoo,
+    CurrentStockInfo,
+    CurrentStockInfoType,
+    StockBrand,
+    StockBrandType,
 } from './feature/fetchStockInfoFromYahoo';
+import { StockInfo, StockInfoType } from './feature/insertStockInfo';
+import { StockOrder, StockOrderType } from './feature/insertStockOrder';
 
 const runFastify = async () => {
     const fastify = Fastify({
@@ -49,47 +37,32 @@ const runFastify = async () => {
         msg: Type.String(),
     });
 
-    fastify.post<{ Body: StockBrandArrayType; Reply: StockInfoArrayType }>(
+    fastify.post<{
+        Body: StockBrandType;
+        Reply: CurrentStockInfoType | ErrorResponseType;
+    }>(
         '/fetchStockInfoFromYahoo',
         {
             schema: {
-                body: StockBrandArray,
+                body: StockBrand,
                 response: {
-                    200: StockInfoArray,
+                    200: CurrentStockInfo,
                     400: ResponseMessage,
                 },
             },
         },
         async (req, rep) => {
-            const { body: ctockBrandArray } = req;
-            const stockInfoArray = fetchStockInfoFromYahoo(ctockBrandArray);
-            rep.status(200).send(await stockInfoArray);
+            try {
+                const { body: brandCode } = req;
+                const brandInfo = fetchStockInfoFromYahoo(brandCode);
+                rep.status(200).send(await brandInfo);
+            } catch (error) {
+                rep.status(400).send({ msg: 'something is going wrong' });
+            }
         }
     );
 
-    fastify.post<{
-        Body: StockBrandArrayType;
-        Reply: CurrentStockPriceArrayType;
-    }>(
-        '/fetchCurrentStockPriceFromYahoo',
-        {
-            schema: {
-                body: StockBrandArray,
-                response: {
-                    200: CurrentStockPriceArray,
-                    400: ResponseMessage,
-                },
-            },
-        },
-        async (req, rep) => {
-            const { body: ctockBrandArray } = req;
-            const currentStockPriceArray =
-                fetchCurrentStockPriceFromYahoo(ctockBrandArray);
-            rep.status(200).send(await currentStockPriceArray);
-        }
-    );
-
-    fastify.post<{ Body: null; Reply: StockArrayType }>(
+    fastify.post<{ Body: null; Reply: StockArrayType | ErrorResponseType }>(
         '/fetchAllStockInfo',
         {
             schema: {
@@ -100,8 +73,12 @@ const runFastify = async () => {
             },
         },
         async (req, rep) => {
-            const stockArray = fetchStockInfo();
-            rep.status(200).send(await stockArray);
+            try {
+                const stockArray = fetchStockInfo();
+                rep.status(200).send(await stockArray);
+            } catch (error) {
+                rep.status(400).send({ msg: 'something is going wrong' });
+            }
         }
     );
 

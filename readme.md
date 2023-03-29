@@ -11,3 +11,12 @@ next : insert new stock order and new stock info
 finish : fetch data from yahoo finance
 
 next : insert new stock order and new stock info
+
+## 2023-03-29
+
+finish :
+show the data from yahoo finance in the frontend page
+
+next :
+null check
+insert new stock order and new stock info
