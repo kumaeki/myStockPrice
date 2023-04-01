@@ -20,3 +20,11 @@ show the data from yahoo finance in the frontend page
 next :
 null check
 insert new stock order and new stock info
+
+## 2023-04-01
+
+finish :
+null check
+
+next :
+insert new stock order and new stock info

@@ -21,26 +21,84 @@ import MenuItem from '@mui/material/MenuItem';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import useFetchShareInfo, { StockInfo } from '../hooks/useFetchShareInfo';
 import Box from '@mui/material/Box';
 import useFetchBranchInfo from '../hooks/useFetchBranchInfo';
 import Typography from '@mui/material/Typography';
+import FormHelperText from '@mui/material/FormHelperText';
 
 const App: FC = () => {
     const [rows, setRows] = useState<StockInfo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [open, setOpen] = React.useState(false);
     const [stockType, setStockType] = useState('');
-    const [stockAccount, setStockAccount] = useState('');
+
     const [stockBrand, setStockBrand] = useState('');
+    const [stockBrandError, setStockBrandError] = useState(false);
+    const handleBrandChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        var value = event.target.value;
+        if (value.trim() === '') {
+            setStockBrandError(true);
+        } else {
+            setStockBrandError(false);
+        }
+        setStockBrand(value);
+    };
+
     const [stockBrandName, setStockBrandName] = useState('***');
+
+    const [stockAccount, setStockAccount] = useState('');
+    const [stockAccountError, setStockAccountError] = useState(false);
+    const handleStockAccountChange = (event: SelectChangeEvent) => {
+        setStockAccountError(false);
+        setStockAccount(event.target.value as string);
+    };
+
+    const [stockNumber, setStockNumber] = useState(0);
+    const [stockNumberError, setStockNumberError] = useState(false);
+    const handleStockNumberChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        var value = event.target.value;
+        var valueNum = event.target.valueAsNumber;
+        if (value === null || value === '' || valueNum <= 0) {
+            setStockNumberError(true);
+        } else {
+            setStockNumberError(false);
+        }
+        setStockNumber(event.target.valueAsNumber);
+    };
+
     const [stockPrice, setStockPrice] = useState(0);
+    const [stockPriceError, setStockPriceError] = useState(false);
+    const handleStockPriceChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        var value = event.target.value;
+        var valueNum = event.target.valueAsNumber;
+        if (value === null || value === '' || valueNum <= 0) {
+            setStockPriceError(true);
+        } else {
+            setStockPriceError(false);
+        }
+        setStockPrice(event.target.valueAsNumber);
+    };
+
     const [CurrentStockPrice, setCurrentStockPrice] = useState(0);
     const [curreny, setCurreny] = useState('');
-    const [stockNumber, setStockNumber] = useState(0);
+
     const [stockPurchaseDate, setStockPurchaseDate] =
         React.useState<Dayjs | null>(null);
+    const [stockPurchaseDateError, setStockPurchaseDateError] = useState(false);
+    const handleStockPurchaseDateChange = (event: dayjs.Dayjs | null) => {
+        if (event === null || !event.isValid() || event.isAfter(dayjs())) {
+            setStockPurchaseDateError(true);
+        } else {
+            setStockPurchaseDateError(false);
+        }
+        setStockPurchaseDate(event);
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -48,10 +106,28 @@ const App: FC = () => {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleClear = () => {
+        setStockBrand('');
+        setStockBrandError(false);
+
         setStockBrandName('***');
+
+        setStockAccount('');
+        setStockAccountError(false);
+
+        setStockNumber(0);
+        setStockNumberError(false);
+
         setStockPrice(0);
+        setStockPriceError(false);
+
         setCurrentStockPrice(0);
         setCurreny('');
+
+        setStockPurchaseDate(null);
+        setStockPurchaseDateError(false);
     };
 
     const handleSearch = async () => {
@@ -61,20 +137,38 @@ const App: FC = () => {
         setCurreny(branchInfo.currency);
     };
 
+    const handleInsertBrand = async () => {
+        var error = false;
+        if (stockBrand === null || stockBrand === '') {
+            setStockBrandError(true);
+            error = true;
+        }
+
+        if (stockAccount === null || stockAccount === '') {
+            setStockAccountError(true);
+            error = true;
+        }
+
+        if (stockNumber === null || stockNumber <= 0) {
+            setStockNumberError(true);
+            error = true;
+        }
+
+        if (stockPrice === null || stockPrice <= 0) {
+            setStockPriceError(true);
+            error = true;
+        }
+
+        if (stockPurchaseDate === null) {
+            setStockPurchaseDateError(true);
+            error = true;
+        }
+
+        if (error) return;
+    };
+
     const handleTypeChange = (event: SelectChangeEvent) => {
         setStockType(event.target.value as string);
-    };
-    const handleAccountChange = (event: SelectChangeEvent) => {
-        setStockAccount(event.target.value as string);
-    };
-    const handleBrandChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setStockBrand(event.target.value as string);
-    };
-    const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setStockPrice(event.target.valueAsNumber);
-    };
-    const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setStockNumber(event.target.valueAsNumber);
     };
 
     useEffect(() => {
@@ -100,18 +194,25 @@ const App: FC = () => {
                         onClose={handleClose}
                         sx={{ margin: 'auto' }}
                     >
-                        <DialogTitle>株購入履歴　新規入力</DialogTitle>
+                        <DialogTitle>株情報　新規入力</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
                                 株の購入履歴を入力してください。
                             </DialogContentText>
                             <div>
                                 <TextField
-                                    sx={{ width: 120, marginY: 2 }}
+                                    sx={{ width: 160, marginY: 2 }}
                                     id="brand"
                                     label="銘柄"
                                     variant="standard"
                                     onChange={handleBrandChange}
+                                    error={stockBrandError}
+                                    value={stockBrand}
+                                    helperText={
+                                        stockBrandError
+                                            ? '銘柄を入力してください。'
+                                            : ''
+                                    }
                                 />
                                 <Button
                                     sx={{ marginLeft: 2, marginTop: 4 }}
@@ -129,7 +230,7 @@ const App: FC = () => {
                                         bgcolor: (theme) =>
                                             theme.palette.mode === 'dark'
                                                 ? '#101010'
-                                                : '#fff',
+                                                : '#EEE',
                                         color: (theme) =>
                                             theme.palette.mode === 'dark'
                                                 ? 'grey.300'
@@ -146,7 +247,10 @@ const App: FC = () => {
                                 </Box>
                             </div>
                             <div>
-                                <FormControl sx={{ minWidth: 120, marginY: 2 }}>
+                                <FormControl
+                                    sx={{ minWidth: 120, marginY: 2 }}
+                                    error={stockAccountError}
+                                >
                                     <InputLabel id="select-account-label">
                                         口座
                                     </InputLabel>
@@ -155,34 +259,56 @@ const App: FC = () => {
                                         id="select-account"
                                         value={stockAccount}
                                         label="口座"
-                                        onChange={handleAccountChange}
+                                        onChange={handleStockAccountChange}
                                     >
                                         <MenuItem value={'一般'}>一般</MenuItem>
                                         <MenuItem value={'特定'}>特定</MenuItem>
                                         <MenuItem value={'NISA'}>NISA</MenuItem>
                                     </Select>
+
+                                    {stockAccountError ? (
+                                        <FormHelperText>
+                                            口座を選択してください。
+                                        </FormHelperText>
+                                    ) : (
+                                        ''
+                                    )}
                                 </FormControl>
                             </div>
                             <div>
                                 <TextField
-                                    sx={{ width: 120, marginY: 2 }}
+                                    sx={{ width: 160, marginY: 2 }}
                                     margin="dense"
                                     id="number"
                                     label="数量"
                                     type="number"
+                                    error={stockNumberError}
+                                    value={stockNumber}
+                                    helperText={
+                                        stockNumberError
+                                            ? '数量を入力してください。'
+                                            : ''
+                                    }
                                     variant="standard"
-                                    onChange={handleNumberChange}
+                                    onChange={handleStockNumberChange}
                                 />
                             </div>
                             <div>
                                 <TextField
-                                    sx={{ width: 120, marginBottom: 4 }}
+                                    sx={{ width: 160, marginBottom: 4 }}
                                     margin="dense"
                                     id="price"
                                     label="単価"
                                     type="number"
+                                    value={stockPrice}
+                                    error={stockPriceError}
+                                    helperText={
+                                        stockPriceError
+                                            ? '単価を入力してください。'
+                                            : ''
+                                    }
                                     variant="standard"
-                                    onChange={handlePriceChange}
+                                    onChange={handleStockPriceChange}
                                 />
                                 <Box
                                     sx={{
@@ -192,7 +318,7 @@ const App: FC = () => {
                                         bgcolor: (theme) =>
                                             theme.palette.mode === 'dark'
                                                 ? '#101010'
-                                                : '#fff',
+                                                : '#EEE',
                                         color: (theme) =>
                                             theme.palette.mode === 'dark'
                                                 ? 'grey.300'
@@ -215,21 +341,35 @@ const App: FC = () => {
                                 <DatePicker
                                     label="購入日付"
                                     value={stockPurchaseDate}
-                                    onChange={(newValue) => {
-                                        setStockPurchaseDate(newValue);
+                                    onChange={(e) => {
+                                        handleStockPurchaseDateChange(e);
                                     }}
                                     renderInput={(params) => (
-                                        <TextField {...params} />
+                                        <TextField
+                                            {...params}
+                                            error={stockPurchaseDateError}
+                                            helperText={
+                                                stockPurchaseDateError
+                                                    ? '今日、または過去の日付を入力してください。'
+                                                    : null
+                                            }
+                                        />
                                     )}
                                 />
                             </LocalizationProvider>
                         </DialogContent>
                         <DialogActions>
                             <Button variant="contained" onClick={handleClose}>
-                                Cancel
+                                Close
                             </Button>
-                            <Button variant="contained" onClick={handleClose}>
-                                Subscribe
+                            <Button variant="contained" onClick={handleClear}>
+                                Clear
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={handleInsertBrand}
+                            >
+                                追加
                             </Button>
                         </DialogActions>
                     </Dialog>
