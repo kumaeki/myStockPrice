@@ -9,9 +9,6 @@ const databaseName = 'local';
 const collectionStockOrder = 't_stock_order';
 const collectionStockInfo = 'm_stock_info';
 const collectionVStock = 'v_stock';
-const collectionType = 'm_type';
-const collectionAccount = 'm_account';
-const collectionCurrency = 'm_currency';
 
 const insertOneStockOrderInner = async (
     url: string,
@@ -80,4 +77,33 @@ const fetchAllStockInfoInner = async (
 export const fetchAllStockInfo = async () => {
     // await initializeDB();
     return fetchAllStockInfoInner(url, databaseName, collectionVStock);
+};
+
+const IsCodeExistInDBInner = async (
+    url: string,
+    databaseName: string,
+    collectionName: string,
+    code: string
+) => {
+    const client = new MongoClient(url);
+    try {
+        const db = client.db(databaseName);
+        const collection = db.collection<StockInfoType>(collectionName);
+        const filter = {
+            code: code,
+        };
+        const array = await collection.find(filter).toArray();
+        return array.length > 0;
+    } finally {
+        await client.close();
+    }
+};
+
+export const IsCodeExistInDB = async (code: string): Promise<boolean> => {
+    return await IsCodeExistInDBInner(
+        url,
+        databaseName,
+        collectionVStock,
+        code
+    );
 };

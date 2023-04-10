@@ -3,6 +3,7 @@ export type brandInfo = {
     name: string;
     currency: string;
     regularMarketPrice: number;
+    fullExchangeName: string;
 };
 
 const useFetchBranchInfo = async (brandCodes: string) => {
@@ -21,6 +22,7 @@ const useFetchBranchInfo = async (brandCodes: string) => {
         name: '',
         currency: '',
         regularMarketPrice: 0,
+        fullExchangeName: '',
     };
 
     await fetch(url, requestOptions)

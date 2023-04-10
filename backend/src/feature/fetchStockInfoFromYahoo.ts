@@ -10,6 +10,7 @@ export const CurrentStockInfo = Type.Object({
     name: Type.String(),
     currency: Type.String(),
     regularMarketPrice: Type.Number(),
+    fullExchangeName: Type.String(),
 });
 export type CurrentStockInfoType = Static<typeof CurrentStockInfo>;
 export const CurrentStockInfoArray = Type.Array(CurrentStockInfo);
@@ -25,6 +26,7 @@ const fetchStockInfoFromYahoo = async (code: StockBrandType) => {
         name: dataFromYahoo.shortName || '',
         currency: dataFromYahoo.currency || '',
         regularMarketPrice: dataFromYahoo.regularMarketPrice || 0,
+        fullExchangeName: dataFromYahoo.fullExchangeName || '',
     };
     return result;
 };

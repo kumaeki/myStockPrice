@@ -1,22 +1,20 @@
 import { Static, Type } from '@sinclair/typebox';
 import Fastify from 'fastify';
 import fetchStockInfo from './feature/fetchStockInfo';
-import { StockArray, StockArrayType, User, UserType } from './feature/Types';
+import { StockArray, StockArrayType } from './feature/Types';
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
-import {
-    insertOneStockInfo,
-    insertOneStockOrder,
-} from './feature/DBAccess/DBAccess';
 import fetchStockInfoFromYahoo, {
     CurrentStockInfo,
     CurrentStockInfoType,
     StockBrand,
     StockBrandType,
 } from './feature/fetchStockInfoFromYahoo';
-import { StockInfo, StockInfoType } from './feature/insertStockInfo';
-import { StockOrder, StockOrderType } from './feature/insertStockOrder';
+import insertStockInfoAndOrder, {
+    StockInfoAndOrder,
+    StockInfoAndOrderType,
+} from './feature/insertStockInfoAndOrder';
 
 const runFastify = async () => {
     const fastify = Fastify({
@@ -83,13 +81,13 @@ const runFastify = async () => {
     );
 
     fastify.post<{
-        Body: StockOrderType;
+        Body: StockInfoAndOrderType;
         Reply: ErrorResponseType;
     }>(
-        '/insertStockOrder',
+        '/insertStockInfoAndOrder',
         {
             schema: {
-                body: StockOrder,
+                body: StockInfoAndOrder,
                 response: {
                     200: ResponseMessage,
                     400: ResponseMessage,
@@ -98,66 +96,16 @@ const runFastify = async () => {
         },
         (req, rep) => {
             try {
-                const { body: stockOrder } = req;
-                insertOneStockOrder(stockOrder);
+                const { body: wholeStockInfo } = req;
+                insertStockInfoAndOrder(wholeStockInfo);
                 rep.status(200).send({ msg: 'inserted successfully' });
             } catch (error) {
                 rep.status(400).send({ msg: 'something is going wrong' });
             }
         }
     );
-
-    fastify.post<{
-        Body: StockInfoType;
-        Reply: ErrorResponseType;
-    }>(
-        '/insertStockInfo',
-        {
-            schema: {
-                body: StockInfo,
-                response: {
-                    200: ResponseMessage,
-                    400: ResponseMessage,
-                },
-            },
-        },
-        (req, rep) => {
-            try {
-                const { body: stockInfo } = req;
-                insertOneStockInfo(stockInfo);
-                rep.status(200).send({ msg: 'inserted successfully' });
-            } catch (error) {
-                rep.status(400).send({ msg: 'something is going wrong' });
-            }
-        }
-    );
-
-    /**
-     * test get, querystring
-     */
 
     type ErrorResponseType = Static<typeof ResponseMessage>;
-
-    fastify.get<{ Querystring: UserType; Reply: UserType | ErrorResponseType }>(
-        '/test_get',
-        {
-            schema: {
-                querystring: User,
-                response: {
-                    200: User,
-                    400: ResponseMessage,
-                },
-            },
-        },
-        (req, rep) => {
-            const { query: user } = req;
-            if (user.name.length < 3) {
-                rep.status(400).send({ msg: 'name is too short' });
-            } else {
-                rep.status(200).send(user);
-            }
-        }
-    );
 
     /**
      * start fastify

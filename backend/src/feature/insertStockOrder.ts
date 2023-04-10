@@ -1,7 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 import { insertOneStockOrder } from './DBAccess/DBAccess';
 
-// stock order
 export const StockOrder = Type.Object({
     code: Type.String(),
     account: Type.String(),

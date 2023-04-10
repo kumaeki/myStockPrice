@@ -27,6 +27,7 @@ import Box from '@mui/material/Box';
 import useFetchBranchInfo from '../hooks/useFetchBranchInfo';
 import Typography from '@mui/material/Typography';
 import FormHelperText from '@mui/material/FormHelperText';
+import userInsertOrder, { StockInfoAndOrder } from '../hooks/userInsertOrder';
 
 const App: FC = () => {
     const [rows, setRows] = useState<StockInfo[]>([]);
@@ -47,6 +48,7 @@ const App: FC = () => {
     };
 
     const [stockBrandName, setStockBrandName] = useState('***');
+    const [fullExchangeName, setFullExchangeName] = useState('***');
 
     const [stockAccount, setStockAccount] = useState('');
     const [stockAccountError, setStockAccountError] = useState(false);
@@ -86,7 +88,7 @@ const App: FC = () => {
     };
 
     const [CurrentStockPrice, setCurrentStockPrice] = useState(0);
-    const [curreny, setCurreny] = useState('');
+    const [currency, setCurreny] = useState('');
 
     const [stockPurchaseDate, setStockPurchaseDate] =
         React.useState<Dayjs | null>(null);
@@ -113,6 +115,7 @@ const App: FC = () => {
         setStockBrandError(false);
 
         setStockBrandName('***');
+        setFullExchangeName('***');
 
         setStockAccount('');
         setStockAccountError(false);
@@ -132,9 +135,20 @@ const App: FC = () => {
 
     const handleSearch = async () => {
         const branchInfo = await useFetchBranchInfo(stockBrand);
-        setStockBrandName(branchInfo.name);
-        setCurrentStockPrice(branchInfo.regularMarketPrice);
-        setCurreny(branchInfo.currency);
+        if (branchInfo.name === undefined) {
+            setStockBrandName('***');
+            setFullExchangeName('***');
+            setCurrentStockPrice(0);
+            setCurreny('');
+            setStockBrandError(true);
+        } else {
+            setStockBrand(stockBrand.toUpperCase());
+            setStockBrandName(branchInfo.name);
+            setFullExchangeName(branchInfo.fullExchangeName);
+            setCurrentStockPrice(branchInfo.regularMarketPrice);
+            setCurreny(branchInfo.currency);
+            setStockBrandError(false);
+        }
     };
 
     const handleInsertBrand = async () => {
@@ -165,18 +179,33 @@ const App: FC = () => {
         }
 
         if (error) return;
+
+        const stockInfoAndOrder: StockInfoAndOrder = {
+            code: stockBrand,
+            name: stockBrandName,
+            type: fullExchangeName,
+            account: stockAccount,
+            number: stockNumber,
+            price: stockPrice,
+            currency: currency,
+            purchase_date: stockPurchaseDate?.format('YYYY-MM-DD'),
+        };
+        console.log(stockInfoAndOrder);
+        await userInsertOrder(stockInfoAndOrder);
+        alert('株情報を登録しました。');
+        fetchData();
     };
 
     const handleTypeChange = (event: SelectChangeEvent) => {
         setStockType(event.target.value as string);
     };
 
+    const fetchData = async () => {
+        const result = await useFetchShareInfo();
+        setRows(result);
+        setIsLoading(false);
+    };
     useEffect(() => {
-        const fetchData = async () => {
-            const result = await useFetchShareInfo();
-            setRows(result);
-            setIsLoading(false);
-        };
         fetchData();
     }, []);
 
@@ -213,6 +242,7 @@ const App: FC = () => {
                                             ? '銘柄を入力してください。'
                                             : ''
                                     }
+                                    onBlur={handleSearch}
                                 />
                                 <Button
                                     sx={{ marginLeft: 2, marginTop: 4 }}
@@ -243,7 +273,12 @@ const App: FC = () => {
                                         borderRadius: 1,
                                     }}
                                 >
-                                    {stockBrandName}
+                                    <Typography>
+                                        市場：{fullExchangeName}
+                                    </Typography>
+                                    <Typography>
+                                        名称：{stockBrandName}
+                                    </Typography>
                                 </Box>
                             </div>
                             <div>
@@ -331,9 +366,8 @@ const App: FC = () => {
                                         borderRadius: 1,
                                     }}
                                 >
-                                    <Typography>現在値</Typography>
                                     <Typography>
-                                        {CurrentStockPrice} {curreny}
+                                        現在値：{CurrentStockPrice} {currency}
                                     </Typography>
                                 </Box>
                             </div>
