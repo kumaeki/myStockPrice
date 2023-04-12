@@ -33,7 +33,6 @@ const App: FC = () => {
     const [rows, setRows] = useState<StockInfo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [open, setOpen] = React.useState(false);
-    const [stockType, setStockType] = useState('');
 
     const [stockBrand, setStockBrand] = useState('');
     const [stockBrandError, setStockBrandError] = useState(false);
@@ -59,9 +58,7 @@ const App: FC = () => {
 
     const [stockNumber, setStockNumber] = useState(0);
     const [stockNumberError, setStockNumberError] = useState(false);
-    const handleStockNumberChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleStockNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         var value = event.target.value;
         var valueNum = event.target.valueAsNumber;
         if (value === null || value === '' || valueNum <= 0) {
@@ -74,9 +71,7 @@ const App: FC = () => {
 
     const [stockPrice, setStockPrice] = useState(0);
     const [stockPriceError, setStockPriceError] = useState(false);
-    const handleStockPriceChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleStockPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         var value = event.target.value;
         var valueNum = event.target.valueAsNumber;
         if (value === null || value === '' || valueNum <= 0) {
@@ -90,8 +85,7 @@ const App: FC = () => {
     const [CurrentStockPrice, setCurrentStockPrice] = useState(0);
     const [currency, setCurreny] = useState('');
 
-    const [stockPurchaseDate, setStockPurchaseDate] =
-        React.useState<Dayjs | null>(null);
+    const [stockPurchaseDate, setStockPurchaseDate] = React.useState<Dayjs | null>(null);
     const [stockPurchaseDateError, setStockPurchaseDateError] = useState(false);
     const handleStockPurchaseDateChange = (event: dayjs.Dayjs | null) => {
         if (event === null || !event.isValid() || event.isAfter(dayjs())) {
@@ -196,10 +190,6 @@ const App: FC = () => {
         fetchData();
     };
 
-    const handleTypeChange = (event: SelectChangeEvent) => {
-        setStockType(event.target.value as string);
-    };
-
     const fetchData = async () => {
         const result = await useFetchShareInfo();
         setRows(result);
@@ -218,16 +208,10 @@ const App: FC = () => {
                     <Button variant="outlined" onClick={handleClickOpen}>
                         株情報　新規入力
                     </Button>
-                    <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        sx={{ margin: 'auto' }}
-                    >
+                    <Dialog open={open} onClose={handleClose} sx={{ margin: 'auto' }}>
                         <DialogTitle>株情報　新規入力</DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
-                                株の購入履歴を入力してください。
-                            </DialogContentText>
+                            <DialogContentText>株の購入履歴を入力してください。</DialogContentText>
                             <div>
                                 <TextField
                                     sx={{ width: 160, marginY: 2 }}
@@ -237,17 +221,10 @@ const App: FC = () => {
                                     onChange={handleBrandChange}
                                     error={stockBrandError}
                                     value={stockBrand}
-                                    helperText={
-                                        stockBrandError
-                                            ? '銘柄を入力してください。'
-                                            : ''
-                                    }
+                                    helperText={stockBrandError ? '銘柄を入力してください。' : ''}
                                     onBlur={handleSearch}
                                 />
-                                <Button
-                                    sx={{ marginLeft: 2, marginTop: 4 }}
-                                    onClick={handleSearch}
-                                >
+                                <Button sx={{ marginLeft: 2, marginTop: 4 }} onClick={handleSearch}>
                                     Search
                                 </Button>
                             </div>
@@ -257,38 +234,21 @@ const App: FC = () => {
                                     sx={{
                                         display: 'block',
                                         p: 1,
-                                        bgcolor: (theme) =>
-                                            theme.palette.mode === 'dark'
-                                                ? '#101010'
-                                                : '#EEE',
-                                        color: (theme) =>
-                                            theme.palette.mode === 'dark'
-                                                ? 'grey.300'
-                                                : 'grey.800',
+                                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#EEE'),
+                                        color: (theme) => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800'),
                                         border: '1px solid',
                                         borderColor: (theme) =>
-                                            theme.palette.mode === 'dark'
-                                                ? 'grey.800'
-                                                : 'grey.300',
+                                            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
                                         borderRadius: 1,
                                     }}
                                 >
-                                    <Typography>
-                                        市場：{fullExchangeName}
-                                    </Typography>
-                                    <Typography>
-                                        名称：{stockBrandName}
-                                    </Typography>
+                                    <Typography>市場：{fullExchangeName}</Typography>
+                                    <Typography>名称：{stockBrandName}</Typography>
                                 </Box>
                             </div>
                             <div>
-                                <FormControl
-                                    sx={{ minWidth: 120, marginY: 2 }}
-                                    error={stockAccountError}
-                                >
-                                    <InputLabel id="select-account-label">
-                                        口座
-                                    </InputLabel>
+                                <FormControl sx={{ minWidth: 120, marginY: 2 }} error={stockAccountError}>
+                                    <InputLabel id="select-account-label">口座</InputLabel>
                                     <Select
                                         labelId="select-account-label"
                                         id="select-account"
@@ -301,13 +261,7 @@ const App: FC = () => {
                                         <MenuItem value={'NISA'}>NISA</MenuItem>
                                     </Select>
 
-                                    {stockAccountError ? (
-                                        <FormHelperText>
-                                            口座を選択してください。
-                                        </FormHelperText>
-                                    ) : (
-                                        ''
-                                    )}
+                                    {stockAccountError ? <FormHelperText>口座を選択してください。</FormHelperText> : ''}
                                 </FormControl>
                             </div>
                             <div>
@@ -319,11 +273,7 @@ const App: FC = () => {
                                     type="number"
                                     error={stockNumberError}
                                     value={stockNumber}
-                                    helperText={
-                                        stockNumberError
-                                            ? '数量を入力してください。'
-                                            : ''
-                                    }
+                                    helperText={stockNumberError ? '数量を入力してください。' : ''}
                                     variant="standard"
                                     onChange={handleStockNumberChange}
                                 />
@@ -337,11 +287,7 @@ const App: FC = () => {
                                     type="number"
                                     value={stockPrice}
                                     error={stockPriceError}
-                                    helperText={
-                                        stockPriceError
-                                            ? '単価を入力してください。'
-                                            : ''
-                                    }
+                                    helperText={stockPriceError ? '単価を入力してください。' : ''}
                                     variant="standard"
                                     onChange={handleStockPriceChange}
                                 />
@@ -350,19 +296,11 @@ const App: FC = () => {
                                         display: 'block',
                                         p: 1,
                                         mb: 2,
-                                        bgcolor: (theme) =>
-                                            theme.palette.mode === 'dark'
-                                                ? '#101010'
-                                                : '#EEE',
-                                        color: (theme) =>
-                                            theme.palette.mode === 'dark'
-                                                ? 'grey.300'
-                                                : 'grey.800',
+                                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#EEE'),
+                                        color: (theme) => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800'),
                                         border: '1px solid',
                                         borderColor: (theme) =>
-                                            theme.palette.mode === 'dark'
-                                                ? 'grey.800'
-                                                : 'grey.300',
+                                            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
                                         borderRadius: 1,
                                     }}
                                 >
@@ -399,10 +337,7 @@ const App: FC = () => {
                             <Button variant="contained" onClick={handleClear}>
                                 Clear
                             </Button>
-                            <Button
-                                variant="contained"
-                                onClick={handleInsertBrand}
-                            >
+                            <Button variant="contained" onClick={handleInsertBrand}>
                                 追加
                             </Button>
                         </DialogActions>
@@ -414,30 +349,14 @@ const App: FC = () => {
                                     <TableRow>
                                         <TableCell />
                                         <TableCell>種類</TableCell>
-                                        <TableCell align="right">
-                                            銘柄
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            通貨
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            保留数量
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            平均取得価額
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            現在値
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            購入時総額
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            時価評価額
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            実現損益
-                                        </TableCell>
+                                        <TableCell align="right">銘柄</TableCell>
+                                        <TableCell align="right">通貨</TableCell>
+                                        <TableCell align="right">保留数量</TableCell>
+                                        <TableCell align="right">平均取得価額</TableCell>
+                                        <TableCell align="right">現在値</TableCell>
+                                        <TableCell align="right">購入時総額</TableCell>
+                                        <TableCell align="right">時価評価額</TableCell>
+                                        <TableCell align="right">実現損益</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className="TableBody">

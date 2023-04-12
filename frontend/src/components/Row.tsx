@@ -19,16 +19,8 @@ const Row = (props: { row: StockInfo }) => {
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? (
-                            <KeyboardArrowUpIcon />
-                        ) : (
-                            <KeyboardArrowDownIcon />
-                        )}
+                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
@@ -37,7 +29,7 @@ const Row = (props: { row: StockInfo }) => {
                 <TableCell align="right">
                     {row.code} {row.name}
                 </TableCell>
-                <TableCell align="right">{row.curreny}</TableCell>
+                <TableCell align="right">{row.currency}</TableCell>
                 <TableCell align="right">{row.number}</TableCell>
                 <TableCell align="right">{row.price_mean}</TableCell>
                 <TableCell align="right">{row.price_current}</TableCell>
@@ -46,17 +38,10 @@ const Row = (props: { row: StockInfo }) => {
                 <TableCell align="right">{row.stock_yield}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell
-                    style={{ paddingBottom: 0, paddingTop: 0 }}
-                    colSpan={6}
-                >
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            <Typography
-                                variant="h6"
-                                gutterBottom
-                                component="div"
-                            >
+                            <Typography variant="h6" gutterBottom component="div">
                                 History
                             </Typography>
                             <Table size="small" aria-label="purchases">
@@ -64,37 +49,19 @@ const Row = (props: { row: StockInfo }) => {
                                     <TableRow>
                                         <TableCell>口座</TableCell>
                                         <TableCell>数量</TableCell>
-                                        <TableCell align="right">
-                                            価額
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            購入日付
-                                        </TableCell>
-                                        {/* <TableCell align="right">
-                                            Total price ($)
-                                        </TableCell> */}
+                                        <TableCell align="right">価額</TableCell>
+                                        <TableCell align="right">購入日付</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {row.history?.map((historyRow) => (
-                                        <TableRow
-                                            key={historyRow.purchase_date}
-                                        >
-                                            <TableCell
-                                                component="th"
-                                                scope="row"
-                                            >
+                                        <TableRow key={historyRow.purchase_date}>
+                                            <TableCell component="th" scope="row">
                                                 {historyRow.account}
                                             </TableCell>
-                                            <TableCell>
-                                                {historyRow.number}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {historyRow.price}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {historyRow.purchase_date}
-                                            </TableCell>
+                                            <TableCell>{historyRow.number}</TableCell>
+                                            <TableCell align="right">{historyRow.price}</TableCell>
+                                            <TableCell align="right">{historyRow.purchase_date}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

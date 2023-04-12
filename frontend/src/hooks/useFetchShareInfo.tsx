@@ -10,7 +10,7 @@ export type StockInfo = {
     code: string;
     name: string;
     type: string;
-    curreny: string;
+    currency: string;
     number: number;
     price_mean: number;
     price_current: number;

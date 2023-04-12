@@ -21,9 +21,7 @@ const insertOneStockOrderInner = async (
         const db = client.db(databaseName);
         const collection = db.collection<StockOrderType>(collectionName);
         const result = await collection.insertOne(context);
-        console.log(
-            `A document was inserted with the _id: ${result.insertedId}`
-        );
+        console.log(`A document was inserted with the _id: ${result.insertedId}`);
     } finally {
         await client.close();
     }
@@ -44,9 +42,7 @@ const insertOneStockInfoInner = async (
         const db = client.db(databaseName);
         const collection = db.collection<StockInfoType>(collectionName);
         const result = await collection.insertOne(context);
-        console.log(
-            `A document was inserted with the _id: ${result.insertedId}`
-        );
+        console.log(`A document was inserted with the _id: ${result.insertedId}`);
     } finally {
         await client.close();
     }
@@ -56,11 +52,7 @@ export const insertOneStockInfo = (context: StockInfoType) => {
     insertOneStockInfoInner(url, databaseName, collectionStockInfo, context);
 };
 
-const fetchAllStockInfoInner = async (
-    url: string,
-    databaseName: string,
-    collectionName: string
-) => {
+const fetchAllStockInfoInner = async (url: string, databaseName: string, collectionName: string) => {
     const client = new MongoClient(url);
     try {
         const result: StockArrayType = [];
@@ -75,16 +67,10 @@ const fetchAllStockInfoInner = async (
 };
 
 export const fetchAllStockInfo = async () => {
-    // await initializeDB();
     return fetchAllStockInfoInner(url, databaseName, collectionVStock);
 };
 
-const IsCodeExistInDBInner = async (
-    url: string,
-    databaseName: string,
-    collectionName: string,
-    code: string
-) => {
+const IsCodeExistInDBInner = async (url: string, databaseName: string, collectionName: string, code: string) => {
     const client = new MongoClient(url);
     try {
         const db = client.db(databaseName);
@@ -100,10 +86,5 @@ const IsCodeExistInDBInner = async (
 };
 
 export const IsCodeExistInDB = async (code: string): Promise<boolean> => {
-    return await IsCodeExistInDBInner(
-        url,
-        databaseName,
-        collectionVStock,
-        code
-    );
+    return await IsCodeExistInDBInner(url, databaseName, collectionVStock, code);
 };

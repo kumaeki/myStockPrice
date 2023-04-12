@@ -1,5 +1,15 @@
 # Readme
 
+## 2023-04-12
+
+finish :
+show the currency and other data in the page
+
+next :
+edit the history from page
+refactor the page
+improve the UI more beautiful
+
 ## 2023-04-10
 
 finish :
