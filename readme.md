@@ -1,5 +1,14 @@
 # Readme
 
+## 2023-04-15
+
+finish :
+refactor the page
+
+next :
+edit the history from page
+improve the UI more beautiful
+
 ## 2023-04-12
 
 finish :

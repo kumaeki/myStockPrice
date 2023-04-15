@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import App from '../src/components/App';
+import StockList from '../src/stocklist/StockList';
 
 const Index = () => {
     return (
         <React.StrictMode>
-            <App />
+            <StockList />
         </React.StrictMode>
     );
 };
