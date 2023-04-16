@@ -1,5 +1,4 @@
 import { Type, Static } from '@sinclair/typebox';
-import { StockOrder } from './insertStockOrder';
 
 export const User = Type.Object({
     name: Type.String(),
@@ -8,7 +7,17 @@ export const User = Type.Object({
 export type UserType = Static<typeof User>;
 
 // stock display in page
-export const HistoryArray = Type.Array(StockOrder);
+export const HistoryStockOrder = Type.Object({
+    _id: Type.String(),
+    code: Type.String(),
+    account: Type.String(),
+    number: Type.Number(),
+    price: Type.Number(),
+    purchase_date: Type.String({ format: 'date' }),
+});
+export type HistoryStockOrderType = Static<typeof HistoryStockOrder>;
+
+export const HistoryArray = Type.Array(HistoryStockOrder);
 export const Stock = Type.Object({
     code: Type.String(),
     name: Type.String(),

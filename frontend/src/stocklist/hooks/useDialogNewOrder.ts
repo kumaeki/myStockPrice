@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
 import dayjs, { Dayjs } from 'dayjs';
-import useFetchBranchInfo from './useFetchBranchInfo';
+import useFetchBrandInfo from './useFetchBrandInfo';
 import userInsertOrder, { StockInfoAndOrder } from './userInsertOrder';
 
 type useDialogNewOrderType = {
@@ -122,7 +122,7 @@ const useDialogNewOrder = (): useDialogNewOrderType => {
     };
 
     const handleSearch = async () => {
-        const branchInfo = await useFetchBranchInfo(stockBrand);
+        const branchInfo = await useFetchBrandInfo(stockBrand);
         if (branchInfo.name === undefined) {
             setStockBrandName('***');
             setFullExchangeName('***');

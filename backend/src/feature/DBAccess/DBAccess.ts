@@ -59,7 +59,13 @@ const fetchAllStockInfoInner = async (url: string, databaseName: string, collect
         const db = client.db(databaseName);
         const collection = db.collection<StockType>(collectionName);
         const array = await collection.find().toArray();
-        array.forEach((item) => result.push(item));
+        array.forEach((item) => {
+            const history = item.history;
+            history.forEach((h) => {
+                h._id = h._id.toString();
+            });
+            result.push(item);
+        });
         return result;
     } finally {
         await client.close();

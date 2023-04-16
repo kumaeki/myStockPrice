@@ -1,4 +1,5 @@
 export type StockHistory = {
+    _id: string;
     code: string;
     account: string;
     number: number;

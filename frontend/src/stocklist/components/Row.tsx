@@ -11,10 +11,16 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { StockInfo } from '../hooks/useFetchShareInfo';
+import Button from '@mui/material/Button';
 
 const Row = (props: { row: StockInfo }) => {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
+    const deleteHistory = (_id: string) => {
+        if (confirm('Are you sure to delete this record?')) {
+        } else {
+        }
+    };
     return (
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -38,7 +44,7 @@ const Row = (props: { row: StockInfo }) => {
                 <TableCell align="right">{row.stock_yield}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: 'lightblue' }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
@@ -54,14 +60,24 @@ const Row = (props: { row: StockInfo }) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.history?.map((historyRow) => (
-                                        <TableRow key={historyRow.purchase_date}>
+                                    {row.history?.map((historyRow, index) => (
+                                        <TableRow key={`${historyRow.purchase_date}-${index}`}>
                                             <TableCell component="th" scope="row">
                                                 {historyRow.account}
                                             </TableCell>
                                             <TableCell>{historyRow.number}</TableCell>
                                             <TableCell align="right">{historyRow.price}</TableCell>
                                             <TableCell align="right">{historyRow.purchase_date}</TableCell>
+                                            <TableCell align="right">
+                                                <Button
+                                                    variant="text"
+                                                    onClick={() => {
+                                                        deleteHistory(historyRow._id);
+                                                    }}
+                                                >
+                                                    削除
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

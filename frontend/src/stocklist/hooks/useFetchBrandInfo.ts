@@ -6,7 +6,7 @@ export type brandInfo = {
     fullExchangeName: string;
 };
 
-const useFetchBranchInfo = async (brandCodes: string) => {
+const useFetchBrandInfo = async (brandCodes: string) => {
     const url = 'http://127.0.0.1:3000/fetchStockInfoFromYahoo';
 
     const requestOptions = {
@@ -33,4 +33,4 @@ const useFetchBranchInfo = async (brandCodes: string) => {
     return result;
 };
 
-export default useFetchBranchInfo;
+export default useFetchBrandInfo;

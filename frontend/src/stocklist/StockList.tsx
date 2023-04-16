@@ -13,7 +13,6 @@ import DialogNewOrder from './components/DialogNewOrder';
 
 const StockList: FC = () => {
     const [rows, setRows] = useState<StockInfo[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -27,49 +26,42 @@ const StockList: FC = () => {
     const fetchData = async () => {
         const result = await useFetchShareInfo();
         setRows(result);
-        setIsLoading(false);
     };
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [open]);
 
     return (
         <div>
-            {isLoading ? (
-                <p>Loading...</p>
-            ) : (
-                <>
-                    <Button variant="outlined" onClick={handleClickOpen}>
-                        株情報　新規入力
-                    </Button>
-                    <DialogNewOrder isOpen={open} handleClose={handleClose} />
-                    <div className="Table">
-                        <TableContainer component={Paper}>
-                            <Table aria-label="collapsible table">
-                                <TableHead className="TableHead">
-                                    <TableRow>
-                                        <TableCell />
-                                        <TableCell>種類</TableCell>
-                                        <TableCell align="right">銘柄</TableCell>
-                                        <TableCell align="right">通貨</TableCell>
-                                        <TableCell align="right">保留数量</TableCell>
-                                        <TableCell align="right">平均取得価額</TableCell>
-                                        <TableCell align="right">現在値</TableCell>
-                                        <TableCell align="right">購入時総額</TableCell>
-                                        <TableCell align="right">時価評価額</TableCell>
-                                        <TableCell align="right">実現損益</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody className="TableBody">
-                                    {rows.map((row) => (
-                                        <Row key={row.name} row={row} />
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </div>
-                </>
-            )}
+            <Button variant="outlined" onClick={handleClickOpen}>
+                株情報　新規入力
+            </Button>
+            <DialogNewOrder isOpen={open} handleClose={handleClose} />
+            <div className="Table">
+                <TableContainer component={Paper}>
+                    <Table aria-label="collapsible table">
+                        <TableHead className="TableHead">
+                            <TableRow>
+                                <TableCell />
+                                <TableCell>種類</TableCell>
+                                <TableCell align="right">銘柄</TableCell>
+                                <TableCell align="right">通貨</TableCell>
+                                <TableCell align="right">保留数量</TableCell>
+                                <TableCell align="right">平均取得価額</TableCell>
+                                <TableCell align="right">現在値</TableCell>
+                                <TableCell align="right">購入時総額</TableCell>
+                                <TableCell align="right">時価評価額</TableCell>
+                                <TableCell align="right">実現損益</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody className="TableBody">
+                            {rows.map((row) => (
+                                <Row key={row.name} row={row} />
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
         </div>
     );
 };

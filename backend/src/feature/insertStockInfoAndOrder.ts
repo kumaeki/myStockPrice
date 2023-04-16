@@ -1,9 +1,5 @@
 import { Static, Type } from '@sinclair/typebox';
-import {
-    IsCodeExistInDB,
-    insertOneStockInfo,
-    insertOneStockOrder,
-} from './DBAccess/DBAccess';
+import { IsCodeExistInDB, insertOneStockInfo, insertOneStockOrder } from './DBAccess/DBAccess';
 import { StockInfoType } from './insertStockInfo';
 
 export const StockInfoAndOrder = Type.Object({
@@ -19,9 +15,7 @@ export const StockInfoAndOrder = Type.Object({
 });
 export type StockInfoAndOrderType = Static<typeof StockInfoAndOrder>;
 
-const insertStockInfoAndOrder = async (
-    wholeStockInfo: StockInfoAndOrderType
-): Promise<void> => {
+const insertStockInfoAndOrder = async (wholeStockInfo: StockInfoAndOrderType): Promise<void> => {
     const code = wholeStockInfo.code;
     const isCodeExist = await IsCodeExistInDB(code);
     if (!isCodeExist) {

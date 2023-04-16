@@ -1,5 +1,14 @@
 # Readme
 
+## 2023-04-16
+
+finish :
+retrieve the _id from the DB
+
+next :
+add the history modify page
+improve the UI more beautiful
+
 ## 2023-04-15
 
 finish :
